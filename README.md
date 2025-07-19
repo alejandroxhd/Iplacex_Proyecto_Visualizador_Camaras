@@ -17,7 +17,7 @@ Servidor Mysql (Recomendable Xampp)
 8) El usuario administrador predeterminado es: admin@admin.com Y Contraseña: 1234
 
 
-Nota: Si se Utiliza en produccion (ejemplo VPS hosting) reemplazar el llamados de las api por la IP de tu servidor, ejemplo http://localhost:3000/api ->> http://40.40.40.40:3000/api 
+Nota: Si se Utiliza en produccion (ejemplo servidor, VPS, hosting etc) dentro del frontend es muy importante reemplazar el llamados de las api por la IP de tu servidor o dominio que aloja el backend, ejemplo http://localhost:3000/api ->> http://40.40.40.40:3000/api o http://contoso.com:3000/api
 
 
 
