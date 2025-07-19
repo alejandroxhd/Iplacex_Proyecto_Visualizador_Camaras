@@ -1,45 +1,55 @@
 <template>
-  <div>
-    <h2>Registro de Actividades</h2>
-    <div v-if="cargando">Cargando logs...</div>
-    <table v-else>
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Cámara</th>
-          <th>Evento</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="log in logs" :key="log.id_log">
-          <td>{{ nombreUsuario(log.id_usuario) }}</td>
-          <td>{{ nombreCamara(log.id_camara) }}</td>
-          <td>{{ log.evento }}</td>
-          <td>{{ new Date(log.fecha).toLocaleString() }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <section class="logs-main">
+    <Navbar />
+    <div class="card logs-card">
+      <header class="card-header">
+        <h2 class="card-title">Registro de Actividades</h2>
+      </header>
+
+      <div class="card-body">
+        <div v-if="cargando" class="cargando-text">Cargando logs...</div>
+        <table v-else class="logs-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Cámara</th>
+              <th>Evento</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="log in logs" :key="log.id_log">
+              <td>{{ nombreUsuario(log.id_usuario) }}</td>
+              <td>{{ nombreCamara(log.id_camara) }}</td>
+              <td>{{ log.evento }}</td>
+              <td>{{ new Date(log.fecha).toLocaleString() }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+import Navbar from './Navbar.vue'
 
 export default {
   name: 'VistaLogs',
+  components: { Navbar },
   data() {
     return {
       logs: [],
       usuarios: {},
       camaras: {},
       cargando: true
-    };
+    }
   },
   async created() {
     try {
       const usuario = JSON.parse(localStorage.getItem('usuario'));
-      const esAdmin = usuario?.rol === 1 || usuario?.rol === "1";
+      const esAdmin = usuario?.rol === 1 || usuario?.rol === "1" || usuario?.rol === 'Admin';
 
       if (!usuario || !esAdmin) {
         alert('Acceso restringido a administradores');
@@ -82,20 +92,66 @@ export default {
       return id ? (this.camaras[id] || '-') : '-';
     }
   }
-};
+}
 </script>
 
 <style scoped>
-table {
+.logs-main {
+  max-width: 950px;
+  margin: 32px auto;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f6f7fb;
+  padding-bottom: 32px;
+  border-radius: 16px;
+}
+.card.logs-card {
+  background: #fff;
+  border-radius: 14px;
+  margin-top: 24px;
+  box-shadow: 0 2px 10px rgba(140, 160, 200, 0.11);
+  border: 1px solid #e6e7ec;
+}
+.card-header {
+  padding: 20px 32px;
+  border-bottom: 1px solid #f1f1f1;
+  background: #f5f7fa;
+  border-radius: 14px 14px 0 0;
+}
+.card-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #283a5b;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.card-body {
+  padding: 24px 32px;
+}
+.cargando-text {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #888;
+  padding: 26px;
+}
+.logs-table {
   width: 100%;
   border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px #eae9f2;
 }
-th, td {
-  border: 1px solid #aaa;
-  padding: 8px;
+.logs-table th, .logs-table td {
+  padding: 12px 10px;
   text-align: left;
 }
-thead {
-  background-color: #eee;
+.logs-table th {
+  background: #f5f7fa;
+  color: #4e5d78;
+  font-weight: 700;
+  border-bottom: 1.5px solid #eaeaea;
+}
+.logs-table tr:nth-child(even) td {
+  background: #f8fafd;
 }
 </style>

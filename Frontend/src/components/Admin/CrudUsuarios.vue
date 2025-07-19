@@ -1,69 +1,99 @@
 <template>
-  <section>
-    <h3>Crear nuevo usuario</h3>
-    <input v-model="nuevoUsuario.nombre" placeholder="Nombre" />
-    <input v-model="nuevoUsuario.correo" placeholder="Correo" />
-    <input v-model="nuevoUsuario.contrasena" placeholder="Contraseña" />
-    <select v-model="nuevoUsuario.rol">
-      <option disabled value="">Selecciona un rol</option>
-      <option value="Admin">Administrador</option>
-      <option value="Intermedio">Intermedio</option>
-      <option value="Usuario">Usuario</option>
-    </select>
-    <button @click="crearUsuario">Crear</button>
+  <section class="crud-usuarios">
+    <!-- Crear usuario -->
+    <div class="card form-card">
+      <header class="card-header">
+        <h3 class="card-title">Crear nuevo usuario</h3>
+      </header>
+      <div class="card-body form-grid">
+        <input v-model="nuevoUsuario.nombre" placeholder="Nombre" type="text" required />
+        <input v-model="nuevoUsuario.correo" placeholder="Correo" type="email" required />
+        <input v-model="nuevoUsuario.contrasena" placeholder="Contraseña" type="password" required />
+        <select v-model="nuevoUsuario.rol" required>
+          <option disabled value="">Selecciona un rol</option>
+          <option value="Admin">Administrador</option>
+          <option value="Intermedio">Intermedio</option>
+          <option value="Usuario">Usuario</option>
+        </select>
+        <button class="btn btn-success" @click="crearUsuario">Crear</button>
+      </div>
+    </div>
 
-    <hr />
+    <hr class="divider" />
 
-    <h3>Usuarios registrados</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Rol</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="u in usuarios" :key="u.id_usuario">
-          <td>{{ u.nombre }}</td>
-          <td>{{ u.correo }}</td>
-          <td>{{ u.rol }}</td>
-          <td>
-            <button @click="cargarUsuario(u)">Editar</button>
-            <button @click="eliminarUsuario(u.id_usuario)">Eliminar</button>
-            <button @click="abrirPermisos(u)">Permisos</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Lista de usuarios -->
+    <div class="card">
+      <header class="card-header">
+        <h3 class="card-title">Usuarios registrados</h3>
+      </header>
+      <div class="card-body">
+        <table class="usuarios-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="u in usuarios" :key="u.id_usuario">
+              <td>{{ u.nombre }}</td>
+              <td>{{ u.correo }}</td>
+              <td>{{ u.rol }}</td>
+              <td>
+                <button class="btn btn-edit" @click="cargarUsuario(u)">Editar</button>
+                <button class="btn btn-danger" @click="eliminarUsuario(u.id_usuario)">Eliminar</button>
+                <button class="btn btn-permisos" @click="abrirPermisos(u)">Permisos</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-    <section v-if="editar">
-      <h3>Editar usuario</h3>
-      <input v-model="usuarioEdit.nombre" placeholder="Nombre" />
-      <input v-model="usuarioEdit.correo" placeholder="Correo" />
-      <select v-model="usuarioEdit.rol">
-        <option value="Admin">Administrador</option>
-        <option value="Intermedio">Intermedio</option>
-        <option value="Usuario">Usuario</option>
-      </select>
-      <button @click="actualizarUsuario">Actualizar</button>
-      <button @click="cancelarEdicion">Cancelar</button>
+    <!-- Editar usuario -->
+    <section v-show="editar" class="edit-modal">
+      <div class="card form-card">
+        <header class="card-header">
+          <h3 class="card-title">Editar usuario</h3>
+        </header>
+        <div class="card-body form-grid">
+          <input v-model="usuarioEdit.nombre" placeholder="Nombre" type="text" required />
+          <input v-model="usuarioEdit.correo" placeholder="Correo" type="email" required />
+          <select v-model="usuarioEdit.rol" required>
+            <option value="Admin">Administrador</option>
+            <option value="Intermedio">Intermedio</option>
+            <option value="Usuario">Usuario</option>
+          </select>
+          <div class="edit-btn-group">
+            <button class="btn btn-success" @click="actualizarUsuario">Actualizar</button>
+            <button class="btn btn-cancel" @click="cancelarEdicion">Cancelar</button>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <div v-if="mostrarPermisos" class="modal">
-      <h3>Asignar cámaras a {{ usuarioSeleccionado?.nombre }}</h3>
-      <div v-for="cam in camaras" :key="cam.id_camara">
-        <input
-          type="checkbox"
-          :id="'cam-' + cam.id_camara"
-          :value="cam.id_camara"
-          v-model="camarasSeleccionadas"
-        />
-        <label :for="'cam-' + cam.id_camara">{{ cam.nombre }}</label>
+    <!-- Modal permisos -->
+    <div v-show="mostrarPermisos" class="modal-bg">
+      <div class="modal">
+        <h3>Asignar cámaras a <span class="txt-accent">{{ usuarioSeleccionado?.nombre }}</span></h3>
+        <div class="camaras-list">
+          <div v-for="cam in camaras" :key="cam.id_camara" class="cam-checkbox">
+            <input
+              type="checkbox"
+              :id="'cam-' + cam.id_camara"
+              :value="cam.id_camara"
+              v-model="camarasSeleccionadas"
+            />
+            <label :for="'cam-' + cam.id_camara">{{ cam.nombre }}</label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-success" @click="guardarPermisos">Guardar</button>
+          <button class="btn btn-cancel" @click="cerrarPermisos">Cerrar</button>
+        </div>
       </div>
-      <button @click="guardarPermisos">Guardar</button>
-      <button @click="cerrarPermisos">Cerrar</button>
     </div>
   </section>
 </template>
@@ -162,6 +192,11 @@ export default {
       await axios.delete(`http://localhost:3000/api/usuarios/${id}`, {
         headers: { Authorization: `Bearer ${this.$store.state.token}` }
       })
+      // Fix: cerrar edición y permisos si el usuario estaba siendo editado o con permisos abiertos
+      this.editar = false
+      this.mostrarPermisos = false
+      this.usuarioSeleccionado = null
+
       alert('Usuario eliminado')
       await this.cargarUsuarios()
     },
@@ -236,14 +271,188 @@ export default {
 </script>
 
 <style scoped>
-.modal {
+.crud-usuarios {
+  max-width: 950px;
+  margin: 32px auto;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f6f7fb;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(60, 71, 117, 0.13);
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(140, 160, 200, 0.07);
+  border: 1px solid #e6e7ec;
+}
+
+.card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f1f1;
+  background: #f5f7fa;
+  border-radius: 14px 14px 0 0;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #283a5b;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.card-body {
+  padding: 18px 24px;
+}
+
+.form-card {
+  margin-bottom: 28px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  padding: 8px 10px;
+  border-radius: 7px;
+  border: 1px solid #bfc7d1;
+  background: #f7f8fa;
+  transition: border 0.3s;
+  font-size: 1rem;
+  outline: none;
+}
+input:focus, select:focus {
+  border: 1.5px solid #5e7cf4;
+  background: #f0f5fe;
+}
+
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 7px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 7px;
+  margin-bottom: 7px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(120, 130, 190, 0.07);
+}
+.btn-success {
+  background: linear-gradient(90deg,#43e97b 0,#38f9d7 100%);
+  color: #225;
+}
+.btn-danger {
+  background: linear-gradient(90deg,#f85032 0,#e73827 100%);
+  color: #fff;
+}
+.btn-edit {
+  background: linear-gradient(90deg,#1fa2ff 0,#12d8fa 100%);
+  color: #fff;
+}
+.btn-permisos {
+  background: linear-gradient(90deg,#ffe259 0,#ffa751 100%);
+  color: #995510;
+}
+.btn-cancel {
+  background: #ccc;
+  color: #444;
+}
+.btn:active {
+  filter: brightness(0.96);
+}
+.edit-btn-group {
+  grid-column: 1/-1;
+  text-align: right;
+}
+
+.divider {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg,#a8edea 0,#fed6e3 100%);
+  margin: 30px 0;
+}
+
+.usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px #eae9f2;
+}
+.usuarios-table th, .usuarios-table td {
+  padding: 12px 8px;
+  text-align: left;
+}
+.usuarios-table th {
+  background: #f5f7fa;
+  color: #4e5d78;
+  font-weight: 700;
+  border-bottom: 1.5px solid #eaeaea;
+}
+.usuarios-table tr:nth-child(even) td {
+  background: #f8fafd;
+}
+
+.edit-modal {
   position: fixed;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  background: white;
-  padding: 1rem;
-  border: 2px solid #333;
-  z-index: 100;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(67, 105, 231, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 120;
+}
+
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(40, 58, 92, 0.23);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  max-width: 410px;
+  width: 100%;
+  padding: 28px 32px 20px 32px;
+  box-shadow: 0 4px 24px rgba(56,89,188,0.13);
+  border: 2px solid #e0e5ff;
+}
+.modal h3 {
+  font-size: 1.2rem;
+  color: #4e5d78;
+  margin-bottom: 14px;
+  text-align: left;
+}
+.txt-accent {
+  color: #1fa2ff;
+  font-weight: 600;
+}
+.camaras-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+.cam-checkbox {
+  margin-bottom: 7px;
+}
+.modal-actions {
+  text-align: right;
 }
 </style>
