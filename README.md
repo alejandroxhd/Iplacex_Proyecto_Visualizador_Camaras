@@ -1,6 +1,11 @@
 # Iplacex_Proyecto_Visualizador_Camaras
 Proyecto titulo por Alejandro García Robles
 
+Requisitos de ejecucion modo desarrollo.
+NodeJS 18 o superior
+Servidor Mysql (Recomendable Xampp)
+
+
 
 1) Descargar el backend y ejecutar npm install para instalar las dependencias necesarias.
 2) Editar el archivo /Config/db.js y reemplazar las credenciales de acceso a la base de datos según tu entorno.
@@ -10,5 +15,9 @@ Proyecto titulo por Alejandro García Robles
 6) Iniciar el backend con el comando npm run dev.
 7) Iniciar el frontend con el comando npm run serve.
 8) El usuario administrador predeterminado es: admin@admin.com Y Contraseña: 1234
-   
+
+
+Nota: Si se Utiliza en produccion (ejemplo VPS hosting) reemplazar el llamados de las api por la IP de tu servidor, ejemplo http://localhost:3000/api ->> http://40.40.40.40:3000/api 
+
+
 
