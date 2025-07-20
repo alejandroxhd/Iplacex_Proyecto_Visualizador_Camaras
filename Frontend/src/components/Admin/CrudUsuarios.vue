@@ -21,13 +21,14 @@
 
     <hr class="divider" />
 
-    <!-- Lista de usuarios -->
+    <!-- Usuarios registrados -->
     <div class="card">
       <header class="card-header">
         <h3 class="card-title">Usuarios registrados</h3>
       </header>
       <div class="card-body">
-        <table class="usuarios-table">
+        <!-- Tabla escritorio -->
+        <table class="usuarios-table desktop-table">
           <thead>
             <tr>
               <th>Nombre</th>
@@ -49,6 +50,20 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Mobile: cards -->
+        <div class="usuarios-cards-mobile">
+          <div v-for="u in usuarios" :key="u.id_usuario" class="usuario-card-mobile">
+            <div class="usuario-nombre">{{ u.nombre }}</div>
+            <div class="usuario-info"><b>Correo:</b> {{ u.correo }}</div>
+            <div class="usuario-info"><b>Rol:</b> {{ u.rol }}</div>
+            <div class="usuario-actions">
+              <button class="btn btn-edit" @click="cargarUsuario(u)">Editar</button>
+              <button class="btn btn-danger" @click="eliminarUsuario(u.id_usuario)">Eliminar</button>
+              <button class="btn btn-permisos" @click="abrirPermisos(u)">Permisos</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -312,13 +327,13 @@ export default {
   margin-bottom: 28px;
 }
 
+/* --- Formulario vertical --- */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   align-items: center;
 }
-
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -330,12 +345,13 @@ select {
   transition: border 0.3s;
   font-size: 1rem;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 input:focus, select:focus {
   border: 1.5px solid #5e7cf4;
   background: #f0f5fe;
 }
-
 .btn {
   padding: 8px 20px;
   border: none;
@@ -383,6 +399,7 @@ input:focus, select:focus {
   margin: 30px 0;
 }
 
+/* Tabla responsiva escritorio */
 .usuarios-table {
   width: 100%;
   border-collapse: collapse;
@@ -404,7 +421,91 @@ input:focus, select:focus {
 .usuarios-table tr:nth-child(even) td {
   background: #f8fafd;
 }
+.desktop-table {
+  display: table;
+}
+.usuarios-cards-mobile {
+  display: none;
+}
 
+/* --- Mobile: cards --- */
+@media (max-width: 900px) {
+  .crud-usuarios {
+    padding: 8px;
+    max-width: 100vw;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .card-header, .card-body {
+    padding: 13px 7px;
+  }
+}
+
+@media (max-width: 700px) {
+  .crud-usuarios {
+    padding: 0;
+    margin: 7px auto;
+    border-radius: 7px;
+  }
+  .form-card {
+    margin-bottom: 10px;
+    border-radius: 7px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .edit-btn-group {
+    margin-top: 8px;
+    text-align: center;
+  }
+  .desktop-table {
+    display: none;
+  }
+  .usuarios-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 10px;
+  }
+  .usuario-card-mobile {
+    background: #f8fafd;
+    border: 1.5px solid #e6e7ec;
+    border-radius: 9px;
+    padding: 15px 12px;
+    box-shadow: 0 2px 9px #e6e7ec45;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .usuario-nombre {
+    font-weight: 600;
+    color: #225;
+    font-size: 1.13rem;
+    margin-bottom: 3px;
+  }
+  .usuario-info {
+    color: #336;
+    font-size: .99rem;
+    margin-bottom: 2px;
+  }
+  .usuario-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .usuario-actions .btn {
+    flex: 1 1 40%;
+    min-width: 90px;
+    margin: 0;
+  }
+}
+
+/* MODALES y otros siguen igual */
 .edit-modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;

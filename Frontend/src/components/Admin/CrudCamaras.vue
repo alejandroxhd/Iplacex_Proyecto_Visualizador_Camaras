@@ -35,13 +35,14 @@
 
     <hr class="divider" />
 
-    <!-- Tabla de cámaras -->
+    <!-- Tabla/Cards de cámaras -->
     <div class="card">
       <header class="card-header">
         <h3 class="card-title">Cámaras registradas</h3>
       </header>
       <div class="card-body">
-        <table class="camaras-table">
+        <!-- Desktop: tabla -->
+        <table class="camaras-table desktop-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -82,6 +83,38 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- Mobile: cards -->
+        <div class="camaras-cards-mobile">
+          <div v-for="c in camaras" :key="c.id_camara" class="camara-card-mobile">
+            <div class="camara-card-header">
+              <span class="camara-id">#{{ c.id_camara }}</span>
+              <span class="camara-nombre">{{ c.nombre }}</span>
+            </div>
+            <div class="camara-info"><b>IP:</b> {{ c.ip }}</div>
+            <div class="camara-info"><b>Ubicación:</b> {{ c.region }}, {{ c.comuna }} - {{ c.direccion }}</div>
+            <div class="camara-info"><b>Empresa:</b> {{ c.id_empresa || '—' }}</div>
+            <div class="camara-info"><b>Particular:</b> {{ c.es_particular ? 'Sí' : 'No' }}</div>
+            <div class="camara-actions">
+              <button class="btn btn-edit" @click="editarCamara(c)">Editar</button>
+              <button class="btn btn-danger" @click="eliminarCamara(c.id_camara)">Eliminar</button>
+              <button
+                class="btn btn-success"
+                @click="iniciarStream(c.id_camara)"
+                :disabled="estadoStream[c.id_camara]"
+              >
+                Iniciar
+              </button>
+              <button
+                v-if="estadoStream[c.id_camara]"
+                class="btn btn-cancel"
+                @click="detenerStream(c.id_camara)"
+              >
+                Detener
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -279,6 +312,7 @@ export default {
   margin-bottom: 28px;
 }
 
+/* --- Formulario vertical --- */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -295,6 +329,8 @@ input[type="password"] {
   transition: border 0.3s;
   font-size: 1rem;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 input:focus {
   border: 1.5px solid #5e7cf4;
@@ -305,6 +341,8 @@ input:focus {
   grid-column: 1 / -1;
   font-size: 1rem;
   margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
 }
 
 select {
@@ -315,6 +353,8 @@ select {
   font-size: 1rem;
   outline: none;
   margin-bottom: 2px;
+  width: 100%;
+  box-sizing: border-box;
 }
 select:disabled {
   background: #ebebeb;
@@ -357,6 +397,21 @@ select:disabled {
   text-align: right;
 }
 
+@media (max-width: 600px) {
+  .edit-btn-group {
+    text-align: center;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .edit-btn-group .btn {
+    margin-right: 0;
+    width: 100%;
+  }
+}
+
+/* --- Divider --- */
 .divider {
   border: none;
   height: 2px;
@@ -364,6 +419,7 @@ select:disabled {
   margin: 30px 0;
 }
 
+/* --- Tabla responsiva desktop --- */
 .camaras-table {
   width: 100%;
   border-collapse: collapse;
@@ -384,5 +440,101 @@ select:disabled {
 }
 .camaras-table tr:nth-child(even) td {
   background: #f8fafd;
+}
+.desktop-table {
+  display: table;
+}
+.camaras-cards-mobile {
+  display: none;
+}
+
+/* --- Mobile Cards --- */
+@media (max-width: 900px) {
+  .crud-camaras {
+    padding: 8px;
+    max-width: 100vw;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .card-header, .card-body {
+    padding: 13px 7px;
+  }
+}
+
+@media (max-width: 700px) {
+  .crud-camaras {
+    padding: 0;
+    margin: 7px auto;
+    border-radius: 7px;
+  }
+  .form-card {
+    margin-bottom: 10px;
+    border-radius: 7px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .edit-btn-group {
+    margin-top: 8px;
+    text-align: center;
+  }
+  .desktop-table {
+    display: none;
+  }
+  .camaras-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 10px;
+  }
+  .camara-card-mobile {
+    background: #f8fafd;
+    border: 1.5px solid #e6e7ec;
+    border-radius: 9px;
+    padding: 15px 12px;
+    box-shadow: 0 2px 9px #e6e7ec45;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .camara-card-header {
+    font-weight: 600;
+    color: #225;
+    font-size: 1.13rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 3px;
+  }
+  .camara-id {
+    background: #e0f6f3;
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: .98rem;
+    color: #1fa2ff;
+  }
+  .camara-nombre {
+    flex: 1;
+  }
+  .camara-info {
+    color: #336;
+    font-size: .99rem;
+    margin-bottom: 2px;
+  }
+  .camara-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .camara-actions .btn {
+    flex: 1 1 40%;
+    min-width: 90px;
+    margin: 0;
+  }
 }
 </style>

@@ -1,14 +1,13 @@
 <template>
   <section class="logs-main">
-    <Navbar />
     <div class="card logs-card">
       <header class="card-header">
         <h2 class="card-title">Registro de Actividades</h2>
       </header>
-
       <div class="card-body">
         <div v-if="cargando" class="cargando-text">Cargando logs...</div>
-        <table v-else class="logs-table">
+        <!-- Tabla escritorio -->
+        <table v-else class="logs-table desktop-table">
           <thead>
             <tr>
               <th>Usuario</th>
@@ -26,6 +25,15 @@
             </tr>
           </tbody>
         </table>
+        <!-- Cards mobile -->
+        <div class="logs-cards-mobile" v-if="!cargando">
+          <div v-for="log in logs" :key="log.id_log" class="log-card-mobile">
+            <div class="campo"><b>Usuario:</b> {{ nombreUsuario(log.id_usuario) }}</div>
+            <div class="campo"><b>Cámara:</b> {{ nombreCamara(log.id_camara) }}</div>
+            <div class="campo"><b>Evento:</b> {{ log.evento }}</div>
+            <div class="campo"><b>Fecha:</b> {{ new Date(log.fecha).toLocaleString() }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -33,11 +41,9 @@
 
 <script>
 import axios from 'axios'
-import Navbar from './Navbar.vue'
 
 export default {
   name: 'VistaLogs',
-  components: { Navbar },
   data() {
     return {
       logs: [],
@@ -96,21 +102,30 @@ export default {
 </script>
 
 <style scoped>
+/* Fondo con degradé */
 .logs-main {
-  max-width: 950px;
-  margin: 32px auto;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f6f7fb;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding-bottom: 32px;
-  border-radius: 16px;
+  border-radius: 0;
 }
+
+/* Card Logs */
 .card.logs-card {
   background: #fff;
   border-radius: 14px;
-  margin-top: 24px;
+  margin-top: 32px;
   box-shadow: 0 2px 10px rgba(140, 160, 200, 0.11);
   border: 1px solid #e6e7ec;
+  width: 100%;
+  max-width: 950px;
 }
+
+/* Header Card */
 .card-header {
   padding: 20px 32px;
   border-bottom: 1px solid #f1f1f1;
@@ -133,6 +148,8 @@ export default {
   color: #888;
   padding: 26px;
 }
+
+/* Tabla logs escritorio */
 .logs-table {
   width: 100%;
   border-collapse: collapse;
@@ -153,5 +170,54 @@ export default {
 }
 .logs-table tr:nth-child(even) td {
   background: #f8fafd;
+}
+
+/* MOBILE */
+.logs-cards-mobile {
+  display: none;
+}
+
+/* RESPONSIVE: Mostrar cards en móvil */
+@media (max-width: 700px) {
+  .logs-main {
+    padding-bottom: 10px;
+    margin: 0;
+    border-radius: 0;
+  }
+  .card.logs-card {
+    border-radius: 8px;
+    margin-top: 10px;
+    max-width: 99vw;
+  }
+  .card-header, .card-body {
+    padding: 14px 6px;
+    border-radius: 8px 8px 0 0;
+  }
+  .card-title {
+    font-size: 1.1rem;
+  }
+  .logs-table {
+    display: none;
+  }
+  .logs-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-top: 8px;
+  }
+  .log-card-mobile {
+    background: #f8fafd;
+    border: 1.5px solid #e6e7ec;
+    border-radius: 9px;
+    padding: 14px 11px 10px 13px;
+    box-shadow: 0 2px 9px #e6e7ec45;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .campo {
+    margin-bottom: 2px;
+  }
 }
 </style>

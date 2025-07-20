@@ -96,4 +96,39 @@ export default {
   background: linear-gradient(90deg,#fd746c 0,#ff9068 100%);
   color: #fff;
 }
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 700px) {
+  .navbar-main {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 7px 9px 7px;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  .navbar-user {
+    font-size: 1rem;
+    text-align: left;
+    padding-bottom: 5px;
+  }
+  .navbar-menu {
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .btn.btn-navbar {
+    width: 100%;
+    margin: 0;
+    border-radius: 6px;
+    font-size: 1rem;
+    padding: 9px 0;
+    text-align: center;
+  }
+  .btn.btn-navbar.btn-logout {
+    margin-left: 0;
+    margin-top: 7px;
+  }
+}
 </style>

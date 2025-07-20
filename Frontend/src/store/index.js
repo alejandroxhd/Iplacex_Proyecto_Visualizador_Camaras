@@ -13,6 +13,21 @@ export default createStore({
     logout(state) {
       state.usuario = null
       state.token = null
+      // Limpia también el localStorage
+      localStorage.removeItem('usuario')
+      localStorage.removeItem('token')
+    }
+  },
+  actions: {
+    inicializarStore({ commit }) {
+      const token = localStorage.getItem('token')
+      const usuario = localStorage.getItem('usuario')
+      if (token && usuario) {
+        commit('setUsuario', {
+          usuario: JSON.parse(usuario),
+          token
+        })
+      }
     }
   }
 })

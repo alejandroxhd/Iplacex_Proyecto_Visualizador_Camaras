@@ -1,6 +1,5 @@
 <template>
   <section class="soporte-main">
-    <Navbar />
     <div class="card soporte-card">
       <header class="card-header">
         <h3 class="card-title">Soporte Técnico</h3>
@@ -21,7 +20,7 @@
       <!-- Lista de tickets -->
       <div class="card-body">
         <h4 class="mb-2">{{ esAdmin ? 'Todos los Tickets' : 'Mis Tickets' }}</h4>
-        <ul class="tickets-list">
+        <ul class="tickets-list desktop-list">
           <li v-for="ticket in tickets" :key="ticket.id_ticket" class="ticket-item">
             <div class="ticket-main">
               <strong>{{ ticket.asunto }}</strong>
@@ -43,6 +42,33 @@
             </div>
           </li>
         </ul>
+
+        <!-- Lista vertical de tickets para mobile -->
+        <div class="tickets-cards-mobile" v-if="tickets.length > 0">
+          <div v-for="ticket in tickets" :key="ticket.id_ticket" class="ticket-card-mobile">
+            <div><b>Asunto:</b> {{ ticket.asunto }}</div>
+            <div>
+              <b>Estado:</b>
+              <span class="estado" :class="estadoClase(ticket.estado)">{{ ticket.estado }}</span>
+            </div>
+            <div><b>Fecha:</b> {{ formatearFecha(ticket.fecha_creacion) }}</div>
+            <div v-if="esAdmin"><b>Usuario:</b> <span>{{ ticket.creado_por }}</span></div>
+            <div class="ticket-actions-mobile">
+              <button class="btn btn-edit" @click="verRespuestas(ticket.id_ticket)">Ver respuestas</button>
+              <template v-if="esAdmin">
+                <div style="margin: 7px 0;">
+                  <label class="mr-1">Estado:</label>
+                  <select v-model="estados[ticket.id_ticket]">
+                    <option value="Abierto">Abierto</option>
+                    <option value="En Proceso">En Proceso</option>
+                    <option value="Cerrado">Cerrado</option>
+                  </select>
+                  <button class="btn btn-success" @click="cambiarEstado(ticket.id_ticket)">Actualizar</button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Respuestas del ticket -->
@@ -67,11 +93,9 @@
 
 <script>
 import axios from 'axios';
-import Navbar from './Navbar.vue';
 
 export default {
   name: 'VistaSoporte',
-  components: { Navbar },
   data() {
     return {
       tickets: [],
@@ -180,30 +204,37 @@ export default {
 </script>
 
 <style scoped>
+/* Fondo degradado para toda la vista */
 .soporte-main {
-  max-width: 900px;
-  margin: 32px auto;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f6f7fb;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 0 0 24px 0;
-  border-radius: 16px;
+  border-radius: 0;
 }
 
+/* Card principal */
 .card.soporte-card {
   background: #fff;
   border-radius: 14px;
   box-shadow: 0 2px 10px rgba(140, 160, 200, 0.11);
   border: 1px solid #e6e7ec;
   padding-bottom: 18px;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 32px;
 }
 
+/* Header */
 .card-header {
   padding: 16px 24px;
   border-bottom: 1px solid #f1f1f1;
   background: #f5f7fa;
   border-radius: 14px 14px 0 0;
 }
-
 .card-title {
   margin: 0;
   font-size: 1.3rem;
@@ -211,11 +242,11 @@ export default {
   font-weight: 700;
   letter-spacing: 1px;
 }
-
 .card-body {
   padding: 16px 24px;
 }
 
+/* Inputs y botones */
 input[type="text"],
 textarea,
 select {
@@ -239,7 +270,6 @@ textarea {
   min-height: 72px;
   resize: vertical;
 }
-
 .btn {
   padding: 8px 20px;
   border: none;
@@ -271,7 +301,6 @@ textarea {
 .btn-group {
   text-align: right;
 }
-
 .divider {
   border: none;
   height: 2px;
@@ -279,6 +308,7 @@ textarea {
   margin: 28px 0 18px 0;
 }
 
+/* TICKETS DESKTOP */
 .tickets-list {
   list-style: none;
   margin: 0;
@@ -330,6 +360,8 @@ textarea {
   align-items: center;
   flex-wrap: wrap;
 }
+
+/* RESPUESTAS */
 .respuestas-section {
   padding: 0 24px;
 }
@@ -355,5 +387,58 @@ textarea {
 }
 .mr-1 {
   margin-right: 6px;
+}
+
+/* --------- RESPONSIVE: Mostrar tarjetas en móvil ---------- */
+.tickets-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .soporte-main {
+    padding: 0;
+  }
+  .card.soporte-card {
+    max-width: 99vw;
+    margin-top: 8px;
+    border-radius: 9px;
+  }
+  .card-header, .card-body {
+    padding: 10px 6px;
+    border-radius: 8px 8px 0 0;
+  }
+  .card-title {
+    font-size: 1.06rem;
+  }
+  .tickets-list {
+    display: none;
+  }
+  .tickets-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-top: 8px;
+  }
+  .ticket-card-mobile {
+    background: #f8fafd;
+    border: 1.5px solid #e7eaf4;
+    border-radius: 9px;
+    padding: 14px 11px 10px 13px;
+    box-shadow: 0 2px 8px #e6e7ec33;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 6px;
+  }
+  .ticket-actions-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .respuestas-section {
+    padding: 0 4px;
+  }
 }
 </style>

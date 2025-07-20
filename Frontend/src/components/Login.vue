@@ -72,7 +72,6 @@ export default {
   box-shadow: 0 4px 32px rgba(60, 71, 117, 0.13);
   text-align: center;
   padding: 2.3rem 2rem 2rem 2rem;
-  /* Elimina el margin si hay, para no desplazarlo */
 }
 
 .login-container h2 {
@@ -116,5 +115,33 @@ input:focus {
 .btn-login:hover {
   background: linear-gradient(90deg,#1fa2ff 0,#12d8fa 100%);
   color: #fff;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+  .login-bg {
+    padding: 0;
+    align-items: flex-start;
+  }
+  .login-container {
+    max-width: 97vw;
+    border-radius: 12px;
+    margin-top: 48px;
+    padding: 2rem 5vw 1.6rem 5vw;
+    box-shadow: 0 2px 20px rgba(60, 71, 117, 0.11);
+  }
+  .login-container h2 {
+    font-size: 1.18rem;
+  }
+  input[type="email"],
+  input[type="password"] {
+    padding: 11px 8px;
+    font-size: 0.98rem;
+    margin-bottom: 13px;
+  }
+  .btn-login {
+    padding: 11px 0;
+    font-size: 1rem;
+  }
 }
 </style>

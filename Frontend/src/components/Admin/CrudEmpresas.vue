@@ -18,13 +18,13 @@
 
     <hr class="divider" />
 
-    <!-- Tabla empresas -->
+    <!-- Tabla empresas (escritorio) -->
     <div class="card">
       <header class="card-header">
         <h3 class="card-title">Empresas registradas</h3>
       </header>
       <div class="card-body">
-        <table class="empresas-table">
+        <table class="empresas-table desktop-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -47,6 +47,19 @@
             </tr>
           </tbody>
         </table>
+        <!-- Mobile: cards -->
+        <div class="empresas-cards-mobile">
+          <div v-for="e in empresas" :key="e.id_empresa" class="empresa-card-mobile">
+            <div><b>ID:</b> {{ e.id_empresa }}</div>
+            <div><b>Nombre:</b> {{ e.nombre }}</div>
+            <div><b>RUT:</b> {{ e.rut }}</div>
+            <div><b>Dirección:</b> {{ e.direccion }}</div>
+            <div class="empresa-actions">
+              <button class="btn btn-edit" @click="editarEmpresa(e)">Editar</button>
+              <button class="btn btn-danger" @click="eliminarEmpresa(e.id_empresa)">Eliminar</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -129,7 +142,6 @@ export default {
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(60, 71, 117, 0.13);
 }
-
 .card {
   background: #fff;
   border-radius: 14px;
@@ -137,14 +149,12 @@ export default {
   box-shadow: 0 2px 10px rgba(140, 160, 200, 0.07);
   border: 1px solid #e6e7ec;
 }
-
 .card-header {
   padding: 16px 24px;
   border-bottom: 1px solid #f1f1f1;
   background: #f5f7fa;
   border-radius: 14px 14px 0 0;
 }
-
 .card-title {
   margin: 0;
   font-size: 1.25rem;
@@ -152,22 +162,18 @@ export default {
   font-weight: 600;
   letter-spacing: 1px;
 }
-
 .card-body {
   padding: 18px 24px;
 }
-
 .form-card {
   margin-bottom: 28px;
 }
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   align-items: center;
 }
-
 input[type="text"] {
   padding: 8px 10px;
   border-radius: 7px;
@@ -176,12 +182,13 @@ input[type="text"] {
   transition: border 0.3s;
   font-size: 1rem;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 input:focus {
   border: 1.5px solid #5e7cf4;
   background: #f0f5fe;
 }
-
 .btn {
   padding: 8px 20px;
   border: none;
@@ -217,14 +224,13 @@ input:focus {
   grid-column: 1/-1;
   text-align: right;
 }
-
 .divider {
   border: none;
   height: 2px;
   background: linear-gradient(90deg,#a8edea 0,#fed6e3 100%);
   margin: 30px 0;
 }
-
+/* Tabla escritorio */
 .empresas-table {
   width: 100%;
   border-collapse: collapse;
@@ -245,5 +251,76 @@ input:focus {
 }
 .empresas-table tr:nth-child(even) td {
   background: #f8fafd;
+}
+.desktop-table {
+  display: table;
+}
+.empresas-cards-mobile {
+  display: none;
+}
+
+/* Mobile: vertical cards */
+@media (max-width: 900px) {
+  .crud-empresas {
+    padding: 8px;
+    max-width: 100vw;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .card-header, .card-body {
+    padding: 13px 7px;
+  }
+}
+@media (max-width: 700px) {
+  .crud-empresas {
+    padding: 0;
+    margin: 7px auto;
+    border-radius: 7px;
+  }
+  .form-card {
+    margin-bottom: 10px;
+    border-radius: 7px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .edit-btn-group {
+    margin-top: 8px;
+    text-align: center;
+  }
+  .desktop-table {
+    display: none;
+  }
+  .empresas-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 10px;
+  }
+  .empresa-card-mobile {
+    background: #f8fafd;
+    border: 1.5px solid #e6e7ec;
+    border-radius: 9px;
+    padding: 15px 12px;
+    box-shadow: 0 2px 9px #e6e7ec45;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .empresa-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .empresa-actions .btn {
+    flex: 1 1 48%;
+    min-width: 90px;
+    margin: 0;
+  }
 }
 </style>
